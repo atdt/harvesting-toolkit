@@ -3,9 +3,9 @@
 This package includes a general purpose toolkit for archiving open data. Data harvesters should start by reading this document, which outlines the steps for constructing a proper data archive of the highest possible integrity.
 
 ## 1. Checkout URL (Google Sheet)
-The archiving event will pass around a link to a shared Spreadsheet documenting a list of urls for classification. Often this list is the work-product of another group tasked with seeding a webcrawler. This list is the starting & ending point for your archiving efforts. Many people will be working from this shared worksheet, so it's important to "checkout" & "checkin" urls as you're working.
+The archiving event will pass around a link to a shared Spreadsheet documenting a list of urls for classification. Often this list is the work-product of another group tasked with seeding a webcrawler. This list is the starting and ending point for your archiving efforts. Many people will be working from this shared worksheet, so it's important to "check-out" and "check-in" urls as you're working.
 
-Each row of the spreadsheet should contain at least the following fields. The names may be different, and there may be many more view:
+Each row of the spreadsheet should contain at least the following fields. The names may be different, and there may be many more:
 
 | url                                         | id                                   | who's working on this url? |
 | ------------------------------------------- | ------------------------------------ | -------------------------- |
@@ -19,7 +19,7 @@ To checkout a url, add your name (or even better, slack username) to the row you
 Before doing anything, take a minute to understand what you're looking at. It's usually best to have a quick check of the url to confirm that this data in fact not crawlable. Often as part of the harvesting team, you'll be the first person with a higher level of technical knowledge to review the url in question.
 
 #### Check for false-positives (content that is in fact crawlable)
-Generally, any url that returns standard HTML, links to more [HTML mimetype pages](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types), and contains little-to-no non-html content, it's crawlable. "View source" from your browser of choice will help see what the crawler itself is seeing. If in fact the data can be crawled, make a note as such in the Google sheet, remove your name from the "checkout" column, notify the seeding / crawling team & they will make sure the link is crawled, and move on to another url.
+Generally, any url that returns standard HTML, links to more [HTML mimetype pages](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types), and contains little-to-no non-html content, it's crawlable. "View source" from your browser of choice will help see what the crawler itself is seeing. If in fact the data can be crawled, make a note as such in the Google sheet, remove your name from the "checkout" column, notify the seeding / crawling team and they will make sure the link is crawled, and move on to another url.
 
 #### Some things to think about while reviewing a url
 * Does this page use javascript to render its content? Crawlers generally cannot parse dynamically-generated content.
@@ -36,7 +36,7 @@ If there is harvestable data, the next step is to set up a directory (step three
 
 ## 3. Generate HTML, JSON & Directory
 
-Before starting it's best to get a directory going for the data you're going to archive. You will be in charge of creating & collecting this structure for each link that's deemed uncrawlable. Using the example from step 1, the structure of the archive will look like so:
+Before starting it's best to get a directory going for the data you're going to archive. You will be in charge of creating and collecting this structure for each link that's deemed uncrawlable. Using the example from step 1, the structure of the archive will look like so:
 
 	DAFD2E80-965F-4989-8A77-843DE716D899
 		├── DAFD2E80-965F-4989-8A77-843DE716D899.html
@@ -53,10 +53,10 @@ Each row in the above is:
 		└── a /data directory that contains the data in question
 
 
-The goal is to pass this finalized folder off for "bagging", as described elsewhere. We repeatedly use the ID so that we can programmatically work through this data later. It is important that the ID be copied *exactly*, with no leading or trailing spaces, and honoring case-sensitivity.
+The goal is to pass this finalized folder off for ["bagging"](example/DAFD2E80-965F-4989-8A77-843DE716D899/DAFD2E80-965F-4989-8A77-843DE716D899.json). We repeatedly use the ID so that we can programmatically work through this data later. It is important that the ID be copied *exactly*, with no leading or trailing spaces, and honoring case-sensitivity.
 
 #### [id].html file
-The first thing you'll want to create is a html copy of the page in question. The html file gives the archive a snapshot of the page at the time of archiving which we can use to monitor for changing data in the future, and corrobrate the provenance of the archive itself. We can also use the .html in conjunction with the scripts you'll include in the tools directory to replicate the archive in the future. To generate the html file, navigate to your new folder in a terminal window & run the following command:
+The first thing you'll want to create is a html copy of the page in question. The html file gives the archive a snapshot of the page at the time of archiving which we can use to monitor for changing data in the future, and corrobrate the provenance of the archive itself. We can also use the .html in conjunction with the scripts you'll include in the tools directory to replicate the archive in the future. To generate the html file, navigate to your new folder in a terminal window and run the following command:
 	
 	wget -O DAFD2E80-965F-4989-8A77-843DE716D899.html  http://www.eia.gov/electricity/data/eia412/
 
@@ -66,25 +66,25 @@ You'll replace ```DAFD2E80-965F-4989-8A77-843DE716D899.html``` with the id + .ht
 The json file is one you'll create by hand to create a machine readable record of the archive. This file contains vital data, including the url that was archived, and date of archiving. the [id.json readme](docs/id-json.md) goes into much more detail.
 
 ### 4a. Identify Data Links & WGET loop with sleep
-If you encounter a page that links to lots of data (for example a "downloads" page), this approach may well work. It's important to know Only use this approach when you encounter *data*, for example pdf's, .zip archives, .csv datasets, etc.
+If you encounter a page that links to lots of data (for example a "downloads" page), this approach may well work. It's important to only use this approach when you encounter *data*, for example pdf's, .zip archives, .csv datasets, etc.
 
-The tricky part of this approach is generating a list of urls to download from the page. If you're skilled with using scripts in combination with html-parsers (for example python's wonderful [beautiful-soup package](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#quick-start)), go for it. Otherwise, we've included the [jquery-url-extraction guide](tools/jquery-url-extraction)], which has the advantage of working within a browser & can operate on a page that has been modified by javascript.
+The tricky part of this approach is generating a list of urls to download from the page. If you're skilled with using scripts in combination with html-parsers (for example python's wonderful [beautiful-soup package](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#quick-start)), go for it. Otherwise, we've included the [jquery-url-extraction guide](tools/jquery-url-extraction)], which has the advantage of working within a browser and can operate on a page that has been modified by javascript.
 
 The example uses this approach, leveraging the jquery-url extraction method to generate a list of urls to feed the wget loop.
 
 ### 4b. FTP download
-have a look download_ftp_tree.py, there's example usage & stuff in the file.
+Have a look at [download_ftp_tree.py] (tools/ftp/download_ftp_tree.py), there are use examples in the file.
 
 ### 4c. API scrape / Custom Solution
-if you encounter an api, chances are you'll have to build some sort of custom solution, or investigate a social angle, for example: asking someone with greater access for a database dump.
+If you encounter an api, chances are you'll have to build some sort of custom solution, or investigate a social angle. For example: asking someone with greater access for a database dump.
 
 ### 5. Write [id].json metadata, add /tools
-From there you'll want to fill out the metadata.json, copy any scripts & tools you used into the /tools directory. It may seem strange to copy code multiple times, but this can help later to reconstruct the archiving process for further refinment later on.
+From there you'll want to fill out the metadata.json, copy any scripts and tools you used into the /tools directory. It may seem strange to copy code multiple times, but this can help later to reconstruct the archiving process for further refinement later on.
 
-It's worth using some judgement here. If a "script" you used includes an entire copy of JAVA, or some suite beyond a simple script, it may be better to document your process in a file & leave that in the tools directory instead.
+It's worth using some judgement here. If a "script" you used includes an entire copy of JAVA, or some suite beyond a simple script, it may be better to document your process in a file and leave that in the tools directory instead.
 
 ### 6. Package data
-Next you'll ship this packet of data on for "bagging", a process outlined in another document. The method of delivery will be different depending on where you're working. If you're at an archiving event, be sure to ask the organizers what to do with finished data.
+Next you'll ship this packet of data on for ["bagging"](example/DAFD2E80-965F-4989-8A77-843DE716D899/DAFD2E80-965F-4989-8A77-843DE716D899.json). The method of delivery will be different depending on where you're working. If you're at an archiving event, be sure to ask the organizers what to do with finished data.
 
 #### Leave the data unmodified
 During the process you may feel inclined to clean things up, add structure to the data, etc. Avoid temptation. Your finished archive will be hashed so we can compare it later for changes, and it's important that we archive original, unmodified content.

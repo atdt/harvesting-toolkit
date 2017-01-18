@@ -18,11 +18,11 @@ To checkout a url, add your name (or even better, slack username) to the row you
 ## 2. Classify Source Type & archivability
 Before doing anything, take a minute to understand what you're looking at. It's usually best to have a quick check of the url to confirm that this data in fact not crawlable. Often as part of the harvesting team, you'll be the first person with a higher level of technical knowledge to review the url in question.
 
-#### Check for false-positives (content that is in fact crawlable).
-Generally, any url that returns standard HTML, links to more [HTML mimetype pages][https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types], and contains little-to-no non-html content, it's crawlable. "View source" from your browser of choice will help see what the crawler itself is seeing. If in fact the data can be crawled, make a note as such in the Google sheet, remove your name from the "checkout" column, notify the seeding / crawling team & they will make sure the link is crawled, and move on to another url.
+#### Check for false-positives (content that is in fact crawlable)
+Generally, any url that returns standard HTML, links to more [HTML mimetype pages](https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types), and contains little-to-no non-html content, it's crawlable. "View source" from your browser of choice will help see what the crawler itself is seeing. If in fact the data can be crawled, make a note as such in the Google sheet, remove your name from the "checkout" column, notify the seeding / crawling team & they will make sure the link is crawled, and move on to another url.
 
 #### Some things to think about while reviewing a url
-* Does this page use javascript to render it's content? Crawlers generally cannot parse dynamically-generated content.
+* Does this page use javascript to render its content? Crawlers generally cannot parse dynamically-generated content.
 * Does this url contain links to non-html content? (For example, zip files, pdfs, excel files, etc...)
 * Is this url some sort of interface for a large database or service? (For example, an interactive map, api gateway, etc.)
 * Does this url contain instructions for connecting to a server, database, or other special source of data?
@@ -32,9 +32,9 @@ Before you go any further, it is *always* worth confirming that the data in ques
 
 **Data acquired outside terms of service is not usable**
 
-If there is harvestable data, the next set up a directory (step three), and then choose the appropriate strategy for archiving!
+If there is harvestable data, the next step is to set up a directory (step three), and then choose the appropriate strategy for archiving!
 
-## 3. Generate Html, json & Directory
+## 3. Generate HTML, JSON & Directory
 
 Before starting it's best to get a directory going for the data you're going to archive. You will be in charge of creating & collecting this structure for each link that's deemed uncrawlable. Using the example from step 1, the structure of the archive will look like so:
 
@@ -63,12 +63,12 @@ The first thing you'll want to create is a html copy of the page in question. Th
 You'll replace ```DAFD2E80-965F-4989-8A77-843DE716D899.html``` with the id + .html, and the url with the one you're looking at.
 
 #### [id].json file
-The json file is one you'll create by hand to create a machine readable record of the archive. This file contains vital data, including the url that was archived, and date of archiving. the [id.json readme][/docs/id-json.md] goes into much more detail.
+The json file is one you'll create by hand to create a machine readable record of the archive. This file contains vital data, including the url that was archived, and date of archiving. the [id.json readme](docs/id-json.md) goes into much more detail.
 
 ### 4a. Identify Data Links & WGET loop with sleep
 If you encounter a page that links to lots of data (for example a "downloads" page), this approach may well work. It's important to know Only use this approach when you encounter *data*, for example pdf's, .zip archives, .csv datasets, etc.
 
-The tricky part of this approach is generating a list of urls to download from the page. If you're skilled with using scripts in combination with html-parsers (for example python's wonderful [beautiful-soup package][https://www.crummy.com/software/BeautifulSoup/bs4/doc/#quick-start]), go for it. Otherwise, we've included the [jquery-url-extraction guide][/tools/jquery-url-extraction], which has the advantage of working within a browser & can operate on a page that has been modified by javascript.
+The tricky part of this approach is generating a list of urls to download from the page. If you're skilled with using scripts in combination with html-parsers (for example python's wonderful [beautiful-soup package](https://www.crummy.com/software/BeautifulSoup/bs4/doc/#quick-start)), go for it. Otherwise, we've included the [jquery-url-extraction guide](tools/jquery-url-extraction)], which has the advantage of working within a browser & can operate on a page that has been modified by javascript.
 
 The example uses this approach, leveraging the jquery-url extraction method to generate a list of urls to feed the wget loop.
 
